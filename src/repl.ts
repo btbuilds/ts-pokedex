@@ -1,11 +1,6 @@
 import { createInterface } from 'node:readline';
 import { stdin, stdout } from 'node:process';
-
-const rl = createInterface({
-  input: stdin,
-  output: stdout,
-  prompt: "Pokedex > ",
-});
+import { getCommands } from './command.js';
 
 /**
  * Normalizes user input into a list of lowercase tokens.
@@ -18,9 +13,9 @@ const rl = createInterface({
  */
 export function cleanInput(input: string): string[] {
     let normalized: string = input
-    .replace(/\s+/g, ' ') // Regex to replace any run of whitespace characters with a single space (handles tabs, newlines, and multiple spaces)
-    .trim()
-    .toLowerCase();
+        .replace(/\s+/g, ' ') // Regex to replace any run of whitespace characters with a single space (handles tabs, newlines, and multiple spaces)
+        .trim()
+        .toLowerCase();
 
     if (normalized === "") return [];
 
@@ -34,17 +29,38 @@ export function cleanInput(input: string): string[] {
  * normalize it, and respond interactively.
  */
 export function startREPL() {
+    const rl = createInterface({
+        input: stdin,
+        output: stdout,
+        prompt: "Pokedex > ",
+    });
     rl.prompt();
 
-    rl.on("line", (line) => {
+    rl.on("line", async (line) => {
         let input = cleanInput(line);
-        
+
         if (input.length === 0) {
             rl.prompt();
             return;
         }
 
-        console.log(`Your command was: ${input[0]}`);
+        let commandName = input[0];
+        let commands = getCommands();
+        let cmd = commands[commandName];
+
+        if (!cmd) {
+            console.log(`Unknown command: "${commandName}". Type "help" for a list of commands.`);
+            rl.prompt();
+            return;
+        }
+
+        try {
+            cmd.callback(commands);
+        } catch (err) {
+            console.log(err);
+        }
+
         rl.prompt();
     })
 }
+
