@@ -1,3 +1,12 @@
+import { createInterface } from 'node:readline';
+import { stdin, stdout } from 'node:process';
+
+const rl = createInterface({
+  input: stdin,
+  output: stdout,
+  prompt: "Pokedex > ",
+});
+
 /**
  * Normalizes user input into a list of lowercase tokens.
  *
@@ -16,4 +25,26 @@ export function cleanInput(input: string): string[] {
     if (normalized === "") return [];
 
     return normalized.split(" ");
+}
+
+/**
+ * Read–eval–print loop (REPL) interface for the Pokedex CLI.
+ *
+ * Uses Node's readline API to accept user input from stdin,
+ * normalize it, and respond interactively.
+ */
+export function startREPL() {
+    rl.prompt();
+
+    rl.on("line", (line) => {
+        let input = cleanInput(line);
+        
+        if (input.length === 0) {
+            rl.prompt();
+            return;
+        }
+
+        console.log(`Your command was: ${input[0]}`);
+        rl.prompt();
+    })
 }
