@@ -1,6 +1,6 @@
 import { createInterface } from 'node:readline';
 import { stdin, stdout } from 'node:process';
-import { getCommands } from './command.js';
+import { getCommands } from './commands.js';
 
 /**
  * Normalizes user input into a list of lowercase tokens.
