@@ -1,6 +1,4 @@
-import { createInterface } from 'node:readline';
-import { stdin, stdout } from 'node:process';
-import { getCommands } from './commands.js';
+import { State } from './state.js';
 
 /**
  * Normalizes user input into a list of lowercase tokens.
@@ -28,12 +26,8 @@ export function cleanInput(input: string): string[] {
  * Uses Node's readline API to accept user input from stdin,
  * normalize it, and respond interactively.
  */
-export function startREPL() {
-    const rl = createInterface({
-        input: stdin,
-        output: stdout,
-        prompt: "Pokedex > ",
-    });
+export function startREPL(state: State) {
+    const rl = state.readline;
     rl.prompt();
 
     rl.on("line", async (line) => {
@@ -45,7 +39,7 @@ export function startREPL() {
         }
 
         let commandName = input[0];
-        let commands = getCommands();
+        let commands = state.commands;
         let cmd = commands[commandName];
 
         if (!cmd) {
@@ -55,7 +49,7 @@ export function startREPL() {
         }
 
         try {
-            cmd.callback(commands);
+            cmd.callback(state);
         } catch (err) {
             console.log(err);
         }
