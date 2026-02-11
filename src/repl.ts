@@ -26,7 +26,7 @@ export function cleanInput(input: string): string[] {
  * Uses Node's readline API to accept user input from stdin,
  * normalize it, and respond interactively.
  */
-export function startREPL(state: State) {
+export async function startREPL(state: State) {
     const rl = state.readline;
     rl.prompt();
 
@@ -49,9 +49,9 @@ export function startREPL(state: State) {
         }
 
         try {
-            cmd.callback(state);
+            await cmd.callback(state);
         } catch (err) {
-            console.log(err);
+            console.log((err as Error).message);
         }
 
         rl.prompt();
