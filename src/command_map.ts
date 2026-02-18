@@ -1,5 +1,3 @@
-import { stat } from "node:fs";
-import { PokeAPI } from "./pokeapi.js"
 import { State } from "./state.js"
 
 export async function commandMapForward(state: State): Promise<void> {
