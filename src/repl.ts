@@ -39,6 +39,7 @@ export async function startREPL(state: State) {
         }
 
         let commandName = input[0];
+        let args = input.slice(1);
         let commands = state.commands;
         let cmd = commands[commandName];
 
@@ -49,7 +50,7 @@ export async function startREPL(state: State) {
         }
 
         try {
-            await cmd.callback(state);
+            await cmd.callback(state, ...args);
         } catch (err) {
             console.log((err as Error).message);
         }
